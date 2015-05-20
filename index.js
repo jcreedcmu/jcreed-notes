@@ -42,7 +42,7 @@ app.get('/', function(req, res) {
                 },
                 function(err, resp, body_json) {
                   if (err) {
-                    return console.error('api call failed:', err);
+                    return console.error('teams api call failed:', err);
                   }
                   var body = JSON.parse(body_json);
                   if (body && body.some
@@ -53,6 +53,7 @@ app.get('/', function(req, res) {
                     res.end("authorized! <a href='/logout'>logout</a>");
                   }
                   else {
+                    req.session.access_token = null;
                     login(req, res);
                   }
                 });
@@ -71,7 +72,7 @@ app.get('/github-callback', function(req, res) {
                            code: code}},
                function (err, resp, body_json) {
                  if (err) {
-                   return console.error('upload failed:', err);
+                   return console.error('access token generation call failed:', err);
                  }
                  var body = JSON.parse(body_json);
                  if (body.error) {
