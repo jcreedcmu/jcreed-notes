@@ -5,9 +5,11 @@ var request = require('request');
 var session = require('express-session');
 var file_store = require('session-file-store');
 
-var session_secret = process.env.SESSION_SECRET;
-var client_id = process.env.CLIENT_ID;
-var client_secret = process.env.CLIENT_SECRET;
+var secrets = JSON.parse(fs.readFileSync(process.env.SECRET, "utf8"));
+var session_secret = secrets.session_secret;
+var client_id = secrets.client_id;
+var client_secret = secrets.client_secret;
+
 var app = express();
 var chef_visual_interaction_team_id = 1215862;
 
