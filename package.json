@@ -1,12 +1,13 @@
 {
-  "name": "docker",
-  "version": "1.0.0",
-  "description": "",
+  "name": "jcreed-notes",
+  "version": "0.0.1",
+  "description": "toy github app, deployed with docker",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "jcreed@gmail.com",
+  "repository": "https://github.com/jcreedcmu/jcreed-notes.git",
   "license": "ISC",
   "dependencies": {
     "express": "^4.12.4",
