@@ -37,7 +37,7 @@
 
   :clean-targets ^{:protect false}
   [[:cljsbuild :builds :app :compiler :output-dir]
-   [:cljsbuild :builds :test :compiler :output-to]]
+   [:cljsbuild :builds :app :compiler :output-to]]
 
   :minify-assets
   {:assets
@@ -45,7 +45,7 @@
 
   :cljsbuild {:builds {:app {:source-paths ["src/cljs"]
                              :compiler {:output-to     "../public/js/app.js"
-                                        :output-dir    "..//public/js/out"
+                                        :output-dir    "../public/js/out"
                                         :asset-path   "js/out"
                                         :optimizations :none
                                         :pretty-print  true}}}}
@@ -83,8 +83,8 @@
                                }}
              :prod {:env {:dev? false}
                     :cljsbuild {:builds {:app {:source-paths ["env/prod/cljs"]
-                                               :compiler {:main "reagent-manage.prod"
-                                                          :output-to "../public/app.js"
+                                               :compiler {:main "ui.prod"
+                                                          :output-to "../public/js/app-prod.js"
                                                           :optimizations :advanced}}}}}
 
              :uberjar {:hooks [leiningen.cljsbuild minify-assets.plugin/hooks]
