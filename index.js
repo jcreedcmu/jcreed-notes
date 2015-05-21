@@ -82,7 +82,10 @@ app.get('/github-callback', function(req, res) {
                    return console.error('access token generation call failed:', err);
                  }
                  var body = JSON.parse(body_json);
-                 if (body.error) {
+                 if (!body) {
+                   console.log("Malformed JSON from access token generation: ", body);
+                 }
+                 else if (body.error) {
                    console.log(JSON.stringify(body, null, 2));
                  }
                  else {
