@@ -11,5 +11,5 @@ cd ui
 lein with-profile prod cljsbuild once
 cd ..
 
-scp -i $1 public/js/app-prod.js $2:jcreed-notes/public/js/app.js
-ssh -i $1 $2 "cd jcreed-notes && git pull && sudo ./deploy.sh"
+scp -i $1 public/js/app-prod.js $2:app.js
+ssh -i $1 $2 "cd jcreed-notes && git pull && mv ../app.js public/js/app.js && sudo ./deploy.sh"
