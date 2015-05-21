@@ -47,12 +47,16 @@ function github_auth_middleware(req, res, next) {
                     return console.error('teams api call failed:', err);
                   }
                   var body = JSON.parse(body_json);
-                  if (body && body.some
-                      && body.some(function(x) {
-                        return x.id == chef_visual_interaction_team_id
-                      })) {
-                    // Success!
-                    return next();
+                  if (body && body.some) {
+                    if (body.some(function(x) {
+                      return x.id == chef_visual_interaction_team_id
+                    })) {
+                      // Success!
+                      return next();
+                    }
+                    else {
+                      res.status(403).send('Sorry! you cant see that.');
+                    }
                   }
                   else {
                     req.session.access_token = null;
