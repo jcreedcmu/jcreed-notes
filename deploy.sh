@@ -16,6 +16,6 @@ if [ -n "$IMGS" ]; then
 fi
 
 # Run the app
-docker run -d -p=80:80 -e "PORT=80" -e "DATADIR=/var/data" \
+docker run -p=80:80 -e "PORT=80" -e "DATADIR=/var/data" \
        -v /home/ubuntu/data:/var/data:ro \
-       --name jcreed-notes jcreed/node-app
+       --name jcreed-notes jcreed/node-app > docker.out &
