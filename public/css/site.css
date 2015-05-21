@@ -1,20 +1,76 @@
-
-body {
+body.flex {
     display: flex;
     flex-direction: column;
     margin: 0px;
     align-items: center;
     justify-content: center;
     background-color: #ffffe7;
-}
-
-.hero {
-    text-align: center;
-    color: #444;
-    flex: auto auto 0px;
-    font-size: 60px;
-    font-family: 'Source Sans Pro', sans;
     font-weight: 700;
 }
 
-a { text-decoration: none; }
+body.app {
+    font-family: 'Source Sans Pro', sans;
+    margin: 50px;
+    color: #333;
+    font-weight: 400;
+    background-color: #fffdee;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+.date {
+    font-weight: 700;
+    font-size: 1.5em;
+    color: #66a;
+    background-color: #ccd;
+    padding-left: 10px;
+    padding-bottom: 3px;
+    padding-top: 3px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+.pill { border-radius: 12px;
+	width: 1.5em;
+	height: 1.5em;
+	text-align: center;
+	display: inline-block;
+	margin: 5px;
+	font-weight: 700;
+	color: white;}
+
+.type-q {
+    background-color: #c44;
+}
+
+.type-a {
+    background-color: #44c;
+}
+
+.entry {
+    border-left: 1px solid #ccd;
+    border-right: 1px solid #ccd;
+    border-bottom: 1px solid #ccd;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    padding-top: 5px;
+    background-color: white;
+    margin-bottom: 20px;
+    white-space: pre-wrap;
+}
+
+
+.hero {
+    text-align: center;
+    color: #555;
+    flex: auto auto 0px;
+    font-size: 60px;
+    font-family: 'Source Sans Pro', sans;
+
+}
+
+a {
+    text-decoration: none;
+}

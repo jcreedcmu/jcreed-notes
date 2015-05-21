@@ -5,6 +5,7 @@ var request = require('request');
 var session = require('express-session');
 var file_store = require('session-file-store');
 
+var DEV = process.env.DEV;
 var secrets = JSON.parse(fs.readFileSync(process.env.DATADIR + "/secrets", "utf8"));
 var session_secret = secrets.session_secret;
 var client_id = secrets.client_id;
@@ -14,19 +15,23 @@ var app = express();
 var chef_visual_interaction_team_id = 1215862;
 
 var FileStore = file_store(session);
-app.use(session({
+
+var session_middleware = session({
   resave: false,
   saveUninitialized: false,
   secret: session_secret,
   store: new FileStore(),
-}));
+});
 
 function login_page(req, res) {
-  var template = fs.readFileSync("templates/index.html", "utf8");
+  var template = fs.readFileSync("templates/login.html", "utf8");
   res.end(mustache.to_html(template, {client_id: client_id}));
 }
 
 function github_auth_middleware(req, res, next) {
+  if (DEV)
+    return next();
+
   if (req.session.access_token) {
     request.get({url: 'https://api.github.com/user/teams',
                  headers: {
@@ -87,17 +92,19 @@ app.get('/github-callback', function(req, res) {
                });
 });
 
-app.use('/api', github_auth_middleware);
+app.use('/api', session_middleware, github_auth_middleware);
 
 app.get('/api/notes', function(req, res) {
   res.end(fs.readFileSync(process.env.DATADIR + "/IDEAS", "utf8"));
 });
 
 app.get('/',
+        session_middleware,
         github_auth_middleware,
         function(req, res) {
           res.type('.html');
-          res.end("authorized! <a href='/logout'>logout</a>");
+          var template = fs.readFileSync("templates/index.html", "utf8");
+          res.end(mustache.to_html(template, {client_id: client_id}));
         });
 
 app.use('/', express.static(__dirname + "/public"));

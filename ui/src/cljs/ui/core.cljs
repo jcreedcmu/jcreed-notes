@@ -1,0 +1,56 @@
+(ns ui.core
+    (:require [reagent.core :as reagent :refer [atom]]
+              [reagent.session :as session]
+              [secretary.core :as secretary :include-macros true]
+              [goog.events :as events]
+              [goog.history.EventType :as EventType]
+              [ajax.core :refer [GET]])
+    (:import goog.History))
+
+(enable-console-print!)
+
+;; -------------------------
+;; Views
+
+(defn collate [lines]
+  (let [[collated _]
+        (reduce (fn [[acc current] line]
+                  (if-let [match (re-matches #"^=== (.*)" line)]
+                    (let [date (get match 1)]
+                      [(assoc acc date []) date])
+                    [(update acc current #(conj % line)) current]))
+                [{} nil]
+                lines)]
+    collated))
+
+(defn process [txt]
+  (let [lines (.split txt "\n")]
+    (collate lines)))
+
+(defn markup-lines [lines]
+  (map
+   (fn [line]
+     (condp (comp seq re-seq) line
+       #"^Q: (.*)" :>> #(do [:span [:div.pill.type-q "Q"]  [:span.bold (second (first %))] "\n"])
+       #"^A: (.*)" :>> #(do [:span [:div.pill.type-a "A"] (second (first %)) "\n" ])
+       #"^A:$" :>> #(do [:span [:div.pill.type-a "A" ] "\n"])
+   (str line "\n")
+   ))
+   lines))
+(GET "/api/notes" {:handler #(session/put! :data (process %))})
+
+
+(defn home-page []
+  [:div
+   (for [[date lines] (reverse (sort-by first (session/get :data)))]
+     ^{:key date} [:div.day
+                   [:div.date date]
+                   `[:div.entry ~@(markup-lines lines)]])])
+
+;; -------------------------
+;; Initialize app
+(defn mount-root []
+  (reagent/render [home-page] (.getElementById js/document "app")))
+
+(defn init! []
+  (mount-root))
