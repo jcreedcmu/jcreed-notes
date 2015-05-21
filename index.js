@@ -55,7 +55,8 @@ function github_auth_middleware(req, res, next) {
                       return next();
                     }
                     else {
-                      res.status(403).send('Sorry! you cant see that.');
+                      req.session.access_token = null;
+                      res.status(403).send("Sorry! you cant see that.");
                     }
                   }
                   else {
