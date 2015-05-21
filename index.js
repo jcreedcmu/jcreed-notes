@@ -70,7 +70,7 @@ function github_auth_middleware(req, res, next) {
   }
 }
 
-app.get('/logout', function(req, res) {
+app.get('/logout', session_middleware, function(req, res) {
   req.session.access_token = null;
   res.redirect("/");
 });
