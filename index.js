@@ -70,7 +70,7 @@ app.get('/logout', function(req, res) {
   res.redirect("/");
 });
 
-app.get('/github-callback', function(req, res) {
+app.get('/github-callback', session_middleware, function(req, res) {
   var code = req.query.code;
   request.post({url: 'https://github.com/login/oauth/access_token',
                 headers: {Accept: "application/json"},
