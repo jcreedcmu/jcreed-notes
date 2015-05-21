@@ -5,7 +5,7 @@ var request = require('request');
 var session = require('express-session');
 var file_store = require('session-file-store');
 
-var secrets = JSON.parse(fs.readFileSync(process.env.SECRET, "utf8"));
+var secrets = JSON.parse(fs.readFileSync(process.env.DATADIR + "/secrets", "utf8"));
 var session_secret = secrets.session_secret;
 var client_id = secrets.client_id;
 var client_secret = secrets.client_secret;
@@ -21,17 +21,12 @@ app.use(session({
   store: new FileStore(),
 }));
 
-function login(req, res) {
+function login_page(req, res) {
   var template = fs.readFileSync("templates/index.html", "utf8");
   res.end(mustache.to_html(template, {client_id: client_id}));
 }
 
-app.get('/logout', function(req, res) {
-  req.session.access_token = null;
-  res.redirect("/");
-});
-
-app.get('/', function(req, res) {
+function github_auth_middleware(req, res, next) {
   if (req.session.access_token) {
     request.get({url: 'https://api.github.com/user/teams',
                  headers: {
@@ -51,8 +46,8 @@ app.get('/', function(req, res) {
                       && body.some(function(x) {
                         return x.id == chef_visual_interaction_team_id
                       })) {
-                    res.type('.html');
-                    res.end("authorized! <a href='/logout'>logout</a>");
+                    // Success!
+                    return next();
                   }
                   else {
                     req.session.access_token = null;
@@ -61,8 +56,13 @@ app.get('/', function(req, res) {
                 });
   }
   else {
-    login(req, res);
+    login_page(req, res);
   }
+}
+
+app.get('/logout', function(req, res) {
+  req.session.access_token = null;
+  res.redirect("/");
 });
 
 app.get('/github-callback', function(req, res) {
@@ -86,6 +86,19 @@ app.get('/github-callback', function(req, res) {
                  }
                });
 });
+
+app.use('/api', github_auth_middleware);
+
+app.get('/api/notes', function(req, res) {
+  res.end(fs.readFileSync(process.env.DATADIR + "/IDEAS", "utf8"));
+});
+
+app.get('/',
+        github_auth_middleware,
+        function(req, res) {
+          res.type('.html');
+          res.end("authorized! <a href='/logout'>logout</a>");
+        });
 
 app.use('/', express.static(__dirname + "/public"));
 
