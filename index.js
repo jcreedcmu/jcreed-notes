@@ -4,6 +4,7 @@ var mustache = require('mustache');
 var request = require('request');
 var session = require('express-session');
 var file_store = require('session-file-store');
+var _ = require('underscore');
 
 var DEV = process.env.DEV;
 var secrets = JSON.parse(fs.readFileSync(process.env.DATADIR + "/secrets", "utf8"));
@@ -102,8 +103,31 @@ app.get('/github-callback', session_middleware, function(req, res) {
 
 app.use('/api', session_middleware, github_auth_middleware);
 
+function get_notes_struct(text) {
+  var cur = "";
+  var struct = {};
+  text.split("\n").forEach(function(line) {
+    var m;
+    if (m = line.match(/^=== (.*)/)) {
+      cur = m[1];
+      struct[m[1]] = [];
+    }
+    else {
+      struct[cur].push(line);
+    }
+  });
+  var all_notes = _.sortBy(_.map(struct, function(v, k) { return {date: k, lines: v}; }),
+                           function(v) { return v.date; });
+  all_notes.reverse();
+  return all_notes;
+}
+
+var notes = get_notes_struct(fs.readFileSync(process.env.DATADIR + "/IDEAS", "utf8"));
+
 app.get('/api/notes', function(req, res) {
-  res.end(fs.readFileSync(process.env.DATADIR + "/IDEAS", "utf8"));
+  var start = req.query.start ? parseInt(req.query.start) : 0;
+  var count = req.query.count ? parseInt(req.query.count) : 10;
+  res.json(notes.slice(start, start + count));
 });
 
 app.get('/',

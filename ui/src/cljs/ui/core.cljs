@@ -23,10 +23,6 @@
                 lines)]
     collated))
 
-(defn process [txt]
-  (let [lines (.split txt "\n")]
-    (collate lines)))
-
 (defn markup-lines [lines]
   (map
    (fn [line]
@@ -37,15 +33,20 @@
    (str line "\n")
    ))
    lines))
-(GET "/api/notes" {:handler #(session/put! :data (process %))})
 
+(GET "/api/notes" {:handler #(session/put! :data %)
+                   :keywords? true
+                   :response-format :json})
 
 (defn home-page []
   [:div
-   (for [[date lines] (reverse (sort-by first (session/get :data)))]
-     ^{:key date} [:div.day
-                   [:div.date date]
-                   `[:div.entry ~@(markup-lines lines)]])])
+   (for [entry (session/get :data)]
+     (let [{:keys [date lines]} entry]
+       ^{:key date} [:div.day
+                     [:div.date date]
+                     `[:div.entry
+                        ~@(markup-lines lines)
+                       ]]))])
 
 ;; -------------------------
 ;; Initialize app
