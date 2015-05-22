@@ -27,9 +27,9 @@
   (map
    (fn [line]
      (condp (comp seq re-seq) line
-       #"^Q: (.*)" :>> #(do [:span [:div.pill.type-q "Q"]  [:span.bold (second (first %))] "\n"])
-       #"^A: (.*)" :>> #(do [:span [:div.pill.type-a "A"] (second (first %)) "\n" ])
-       #"^A:$" :>> #(do [:span [:div.pill.type-a "A" ] "\n"])
+       #"^Q: (.*)" :>> #(do [:span [:span.pill.type-q "Q"] [:span.bold (second (first %))] "\n"])
+       #"^A: (.*)" :>> #(do [:span [:span.pill.type-a "A"] (second (first %)) "\n" ])
+       #"^A:$" :>> #(do [:span ])
    (str line "\n")
    ))
    lines))

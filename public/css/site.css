@@ -9,7 +9,8 @@ body.flex {
 }
 
 body.app {
-    font-family: 'Source Sans Pro', sans;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 14px;
     margin: 50px;
     color: #333;
     font-weight: 400;
@@ -21,6 +22,7 @@ body.app {
 }
 
 .date {
+    font-family: 'Source Sans Pro', sans;
     font-weight: 700;
     font-size: 1.5em;
     color: #66a;
@@ -32,21 +34,21 @@ body.app {
     border-top-right-radius: 20px;
 }
 
-.pill { border-radius: 12px;
-	width: 1.5em;
-	height: 1.5em;
-	text-align: center;
-	display: inline-block;
-	margin: 5px;
-	font-weight: 700;
-	color: white;}
+.pill {
+    border-radius: 10px;
+    margin: 1px 5px 1px 0px;
+    padding: 1px 6px 2.5px 6px;
+    text-align: center;
+    display: inline-block;
+    color: white;
+}
 
 .type-q {
-    background-color: #c44;
+    background-color: #d75;
 }
 
 .type-a {
-    background-color: #44c;
+    background-color: #57d;
 }
 
 .entry {
