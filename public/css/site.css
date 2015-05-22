@@ -47,8 +47,33 @@ body.app {
     background-color: #d75;
 }
 
+.type-shell {
+    background-color: #777;
+}
+
 .type-a {
     background-color: #57d;
+}
+
+.here-block {
+    background-color: #ffe;
+    color: #666;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 3px;
+    margin-left: 1em;
+    overflow-x: auto;
+    max-width: 1000px;
+    white-space: pre;
+}
+
+.shell {
+    background-color: #ffe;
+    color: #666;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 3px;
+    line-height: 2em;
 }
 
 .entry {

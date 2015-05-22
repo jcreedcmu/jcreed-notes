@@ -23,15 +23,34 @@
                 lines)]
     collated))
 
+
+(defn find-here-blocks [lines]
+  (:out (reduce (fn [{:keys [out state]} line]
+             (case state
+               :outside (if (= "<<<" line)
+                          {:out out :state []}
+                          {:out (conj out line) :state state})
+               ;; inside <<< block
+               (if (= ">>>" line)
+                 {:out (conj out `[:div.here-block ~@state]) :state :outside}
+                 {:out out :state (conj state (str line "\n"))})))
+           {:out []
+            :state :outside} lines)))
+
 (defn markup-lines [lines]
   (map
    (fn [line]
-     (condp (comp seq re-seq) line
-       #"^Q: (.*)" :>> #(do [:span [:span.pill.type-q "Q"] [:span.bold (second (first %))] "\n"])
-       #"^A: (.*)" :>> #(do [:span [:span.pill.type-a "A"] (second (first %)) "\n" ])
-       #"^A:$" :>> #(do [:span ])
-   (str line "\n")
-   ))
+     (if (string? line)
+       (condp (comp seq re-seq) line
+         #"^(https?://[^ ]+)" :>> #(do [:span [:a {:href (second (first %))} (second (first %))] "\n"])
+        #"^TODO: (.*)" :>> #(do [:span [:span.pill.type-q "TODO"] [:span.bold (second (first %))] "\n"])
+        #"^DONE: (.*)" :>> #(do [:span [:span.pill.type-a "DONE"] [:span (second (first %))] "\n"])
+        #"^Q: (.*)" :>> #(do [:span [:span.pill.type-q "Q"] [:span.bold (second (first %))] "\n"])
+        #"^A: (.*)" :>> #(do [:span [:span.pill.type-a "A"] (second (first %)) "\n" ])
+        #"^\$ (.*)" :>> #(do [:span [:span.pill.type-shell "$"] [:span.shell (second (first %))] "\n" ])
+        #"^A:$" :>> #(do [:span [:span.pill.type-a "A"] "\n"])
+        (str line "\n"))
+      line))
    lines))
 
 (GET "/api/notes" {:handler #(session/put! :data %)
@@ -45,7 +64,9 @@
        ^{:key date} [:div.day
                      [:div.date date]
                      `[:div.entry
-                        ~@(markup-lines lines)
+                       ~@(-> lines
+                             (find-here-blocks)
+                             (markup-lines))
                        ]]))])
 
 ;; -------------------------
