@@ -1,0 +1,9 @@
+node_modules/
+public/js/app-prod.js
+public/js/app.js
+public/js/out/
+ui/LICENSE
+ui/Procfile
+ui/README.md
+ui/figwheel_server.log
+ui/system.properties
