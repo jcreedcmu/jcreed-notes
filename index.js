@@ -21,7 +21,10 @@ var session_middleware = session({
   resave: false,
   saveUninitialized: false,
   secret: session_secret,
-  store: new FileStore(),
+  store: new FileStore({
+    retries: -1, // assume the filesystem is reliable. Logging is noisy
+                 // otherwise when sessions are lost.
+  }),
 });
 
 function login_page(req, res) {
